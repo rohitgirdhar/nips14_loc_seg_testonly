@@ -33,6 +33,12 @@
 #define NW_IMG_WID 256
 #define NW_IMG_HT 256
 
+
+#define METHOD 2
+// define METHODS
+#define STOR_HDF5 1
+#define STOR_JPG 2
+
 using namespace std;
 using namespace cv;
 using namespace caffe;
@@ -126,7 +132,7 @@ int main(int argc, char** argv)
       Mat seg(DIM, DIM, CV_32FC1);
 			for(int j = 0; j < DIM; j++) {
         for (int k = 0; k < DIM; k++) {
-  				seg.at<float>(Point2d(j, k)) = (float) output->data_at(i, j * DIM + k, 0, 0);
+  				seg.at<float>(Point2d(k, j)) = (float) output->data_at(i, j * DIM + k, 0, 0);
         }
       }
       string fpath, tmp;
@@ -136,15 +142,23 @@ int main(int argc, char** argv)
       fin_bbox >> tmp >> xmin >> ymin >> xmax >> ymax;
       genSegImg(xmin, ymin, xmax, ymax, seg, finalS);
 
-      string outfpath = (fs::path(rootfolder) / fs::path(fpath + ".h5")).string();
+      string outfpath = (fs::path(rootfolder) / fs::path(fpath)).string();
       makeParentDir(outfpath);
-      hid_t file_id_ = H5Fcreate(outfpath.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
-      CHECK_GE(file_id_, 0) << "Failed to open hdf5 file to store " << outfpath;
-      hsize_t dims[2];
-      dims[0] = finalS.rows; dims[1] = finalS.cols;
-      H5LTmake_dataset_float(file_id_, "seg", 2, dims, (float*)finalS.data);
-      herr_t st = H5Fclose(file_id_);
-      CHECK_GE(st, 0) << "Unable to close h5 file for " << outfpath;
+      if (METHOD == STOR_HDF5) {
+        outfpath += ".h5";
+        hid_t file_id_ = H5Fcreate(outfpath.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+        CHECK_GE(file_id_, 0) << "Failed to open hdf5 file to store " << outfpath;
+        hsize_t dims[2];
+        dims[0] = finalS.rows; dims[1] = finalS.cols;
+        H5LTmake_dataset_float(file_id_, "seg", 2, dims, (float*)finalS.data);
+        herr_t st = H5Fclose(file_id_);
+        CHECK_GE(st, 0) << "Unable to close h5 file for " << outfpath;
+      } else {
+        Mat finalS_uint;
+        finalS.convertTo(finalS_uint, CV_8UC1);
+        equalizeHist(finalS_uint, finalS_uint);
+        imwrite(outfpath, finalS_uint);
+      }
 		}
 	}
 
