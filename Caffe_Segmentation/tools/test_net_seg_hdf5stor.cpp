@@ -153,7 +153,7 @@ int main(int argc, char** argv)
         H5LTmake_dataset_float(file_id_, "seg", 2, dims, (float*)finalS.data);
         herr_t st = H5Fclose(file_id_);
         CHECK_GE(st, 0) << "Unable to close h5 file for " << outfpath;
-      } else {
+      } else if (METHOD == STOR_JPG) {
         Mat finalS_uint;
         finalS.convertTo(finalS_uint, CV_8UC1);
         equalizeHist(finalS_uint, finalS_uint);
