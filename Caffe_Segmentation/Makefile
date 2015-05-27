@@ -170,7 +170,8 @@ LIBRARIES += glog gflags protobuf leveldb snappy \
 	boost_system \
 	boost_filesystem \
 	hdf5_hl hdf5 \
-	opencv_core opencv_highgui opencv_imgproc pthread
+	opencv_core opencv_highgui opencv_imgproc pthread \
+	opencv_imgcodecs
 PYTHON_LIBRARIES := boost_python python2.7
 WARNINGS := -Wall -Wno-sign-compare
 

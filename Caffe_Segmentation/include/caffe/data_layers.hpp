@@ -274,6 +274,35 @@ class ImageDataLayer : public BasePrefetchingDataLayer<Dtype> {
 };
 
 /**
+ * @brief Provides data to the Net from image files.
+ *
+ * TODO(dox): thorough documentation for Forward and proto params.
+ */
+template <typename Dtype>
+class ImageDataTestLayer : public BaseDataLayer<Dtype> {
+ public:
+  explicit ImageDataTestLayer(const LayerParameter& param)
+      : BaseDataLayer<Dtype>(param) {}
+  virtual void DataLayerSetUp(const vector<Blob<Dtype>*>& bottom,
+      vector<Blob<Dtype>*>* top);
+
+  virtual inline LayerParameter_LayerType type() const {
+    return LayerParameter_LayerType_IMAGE_DATA_TEST;
+  }
+  virtual inline int ExactNumBottomBlobs() const { return 0; }
+  virtual inline int ExactNumTopBlobs() const { return 2; }
+
+ protected:
+  virtual void Forward_cpu(const vector<Blob<Dtype>*>& bottom,
+      vector<Blob<Dtype>*>* top);
+  Blob<Dtype> prefetch_data_;
+  Blob<Dtype> prefetch_label_;
+  vector<std::pair<std::string, int> > lines_;
+  int lines_id_;
+};
+
+
+/**
  * @brief Provides data to the Net from memory.
  *
  * TODO(dox): thorough documentation for Forward and proto params.
