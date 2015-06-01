@@ -114,7 +114,9 @@ void ImageDataLayer<Dtype>::InternalThreadEntry() {
     }
 
     if (this->layer_param_.transform_param().is_seg()) {
-      this->data_transformer_.Transform(lines_id_, item_id, datum, this->mean_, top_data);
+      this->data_transformer_.Transform(lines_id_, item_id, datum, this->mean_, top_data, /* resetLocData= */ false);
+      // resetLocData is not required here because this layer is mostly used in training, where new images are
+      // not being provided at the real time
     } else {
       // Apply transformations (mirror, crop...) to the data
       this->data_transformer_.Transform(item_id, datum, this->mean_, top_data);

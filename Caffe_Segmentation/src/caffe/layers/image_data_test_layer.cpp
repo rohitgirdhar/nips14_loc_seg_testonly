@@ -96,7 +96,7 @@ void ImageDataTestLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
     }
 
     if (this->layer_param_.transform_param().is_seg()) {
-      this->data_transformer_.Transform(lines_id_, item_id, datum, this->mean_, top_data);
+      this->data_transformer_.Transform(lines_id_, item_id, datum, this->mean_, top_data, /* resetLocData= */ true);
     } else {
       // Apply transformations (mirror, crop...) to the data
       this->data_transformer_.Transform(item_id, datum, this->mean_, top_data);

@@ -98,9 +98,11 @@ void DataTransformer<Dtype>::Transform(const int batch_item_id,
 }
 
 #define OFFSET ((256-227)/2)
+// resetLocData (added by rg) is added to use in IMAGE_DATA_TEST layer - where I need to re-read the box
+// when the new image is being processed, without re-loading the caffe models
 template<typename Dtype>
 void DataTransformer<Dtype>::Transform(const int idx, const int batch_item_id,
-		const Datum& datum, const Dtype* mean, Dtype* transformed_data) {
+		const Datum& datum, const Dtype* mean, Dtype* transformed_data, bool resetLocData = false) {
 	const string& data = datum.data();
 	const int channels = datum.channels();
 	const int height = datum.height();
@@ -117,7 +119,9 @@ void DataTransformer<Dtype>::Transform(const int idx, const int batch_item_id,
 	}
 
 	// 坐标映射回原图
-  SetUpLocResultFromText();
+  if (resetLocData) {
+    SetUpLocResultFromText();
+  }
 	int x1 = MIN(width-1, MAX(0, loc_result_[idx][0] + OFFSET));
 	int y1 = MIN(height-1, MAX(0, loc_result_[idx][1] + OFFSET));
 	int x2 = MIN(width-1, MAX(0, loc_result_[idx][2] + OFFSET));

@@ -43,7 +43,7 @@ class DataTransformer {
                  const Dtype* mean, Dtype* transformed_data);
 
   void Transform(const int idx, const int batch_item_id, const Datum& datum,
-                   const Dtype* mean, Dtype* transformed_data);
+                   const Dtype* mean, Dtype* transformed_data, bool resetLocData);
 
   vector<vector<Dtype> > loc_result_;
   void SetUpLocResultFromText();

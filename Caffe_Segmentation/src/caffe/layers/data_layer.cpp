@@ -177,7 +177,7 @@ void DataLayer<Dtype>::InternalThreadEntry() {
     }
 
     if (this->layer_param_.transform_param().is_seg()){
-    	this->data_transformer_.Transform(idx_, item_id, datum, this->mean_, top_data);
+    	this->data_transformer_.Transform(idx_, item_id, datum, this->mean_, top_data, /* resetLocData=*/ false);
     }else{
       // Apply data transformations (mirror, scale, crop...)
       this->data_transformer_.Transform(item_id, datum, this->mean_, top_data);
