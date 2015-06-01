@@ -117,6 +117,7 @@ void DataTransformer<Dtype>::Transform(const int idx, const int batch_item_id,
 	}
 
 	// 坐标映射回原图
+  SetUpLocResultFromText();
 	int x1 = MIN(width-1, MAX(0, loc_result_[idx][0] + OFFSET));
 	int y1 = MIN(height-1, MAX(0, loc_result_[idx][1] + OFFSET));
 	int x2 = MIN(width-1, MAX(0, loc_result_[idx][2] + OFFSET));
@@ -188,6 +189,7 @@ unsigned int DataTransformer<Dtype>::Rand() {
 
 template<typename Dtype>
 void DataTransformer<Dtype>::SetUpLocResultFromText() {
+  loc_result_.clear();
 	ifstream infile(param_.loc_result().c_str());
 	if (!infile.is_open()) {
 		LOG(ERROR)<< "Unable to open file: " << param_.loc_result();
